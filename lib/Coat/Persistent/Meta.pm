@@ -4,11 +4,13 @@ use strict;
 use warnings;
 use base 'Exporter';
 
+use Data::Dumper;
+
 # The placeholder for all meta-information saved for Coat::Persistent models.
 my $META = {};
 
 # supported meta attributes for models
-my @attributes = qw(table_name primary_key accessor);
+my @attributes = qw(table_name primary_key order accessor);	# MODIF lartet, ajout de order
 
 # accessor to the meta information of a model
 # ex: Coat::Persistent::Meta->model('User')
@@ -54,7 +56,7 @@ sub linearized_attributes {
 #
 sub _create_model_accessor { 
     my ($attribute) = @_;
-
+    
     my $sub_class_accessor = sub {
         my ($self, $model, $value) = @_;
         (@_ == 2) 
