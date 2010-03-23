@@ -227,7 +227,8 @@ sub has_p {
         confess "Cannot be called from an instance" if ref $class;
         confess "Cannot find without a value" unless defined $value;
         my $table = Coat::Persistent::Meta->table_name($class);
-        my ($sql, @values) = $sql_abstract->select($table, '*', {$attr => $value});
+        my $order = Coat::Persistent::Meta->order($class); # MODIF Lartet, ajout de la ligne
+        my ($sql, @values) = $sql_abstract->select($table, '*', {$attr => $value}, $order); # MODIF Lartet, ajout du parametre $order
         return $class->find_by_sql($sql, @values);
     };
     _bind_code_to_symbol( $sub_find_by, 
@@ -423,6 +424,7 @@ sub import {
     # save the meta information obout the model mapping
     Coat::Persistent::Meta->table_name($caller, $options{table_name});
     Coat::Persistent::Meta->primary_key($caller, $options{primary_key});
+    Coat::Persistent::Meta->order($caller, $options{order}) if defined $options{order}; # MODIF lartet, affectation de la valeur de la directive order
 
     # if the primary_key is defined
     if (defined $options{primary_key}) {
